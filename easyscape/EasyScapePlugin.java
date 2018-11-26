@@ -13,8 +13,12 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.Text;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.inject.Inject;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @PluginDescriptor(
         name = "Easyscape",
@@ -39,12 +43,12 @@ public class EasyScapePlugin extends Plugin {
 
     @Override
     public void startUp() {
-        log.debug("Dongle Started.");
+        log.debug("Easyscape Started.");
     }
 
     @Override
     public void shutDown() {
-        log.debug("Dongle Stopped.");
+        log.debug("Easyscape Stopped.");
     }
 
     @Subscribe
@@ -62,6 +66,19 @@ public class EasyScapePlugin extends Plugin {
             }
         }
 
+        if (config.getRemoveMonster()) {
+            for (String s : config.getRemovedMonsters().split(",")) {
+                s = s.trim();
+                String[] parts = target.split(" ");
+                for(String t : parts) {
+                    if (t.equalsIgnoreCase(s) && target.substring(0, s.length()).equalsIgnoreCase(s)) {
+                        delete(target);
+                        break;
+                    }
+                }
+            }
+        }
+
         if (config.getSwapSmithing()) {
             if (option.equalsIgnoreCase("Smith-1")) {
                 swap("Smith-All", "Smith-1", target);
@@ -71,7 +88,11 @@ public class EasyScapePlugin extends Plugin {
         }
 
         if (config.getSwapTanning()) {
-            swap("Tan-1", "Tan-All", target);
+            swap("Tan 1", "Tan All", target);
+        }
+
+        if (config.getSwapStairs()) {
+            swap("Climb Up Stairs", "Climb Stairs", target);
         }
 
         if (option.equalsIgnoreCase("Clear-All") && target.equalsIgnoreCase("Bank Filler")) {
@@ -80,6 +101,7 @@ public class EasyScapePlugin extends Plugin {
 
         if (target.toLowerCase().contains("ardougne cloak") && config.getSwapArdougneCape()) {
             swap("Kandarin Monastery", option, target);
+            swap("Monastery Teleport", option, target);
         }
 
         if (config.getSwapEssencePouch()) {
@@ -175,6 +197,18 @@ public class EasyScapePlugin extends Plugin {
             entries[idxB] = entry;
             client.setMenuEntries(entries);
         }
+    }
+
+    private void delete(String target) {
+        MenuEntry[] entries = client.getMenuEntries();
+
+        for (int i = entries.length - 1; i >= 0; i--) {
+            final String tar = Text.removeTags(entries[i].getTarget()).toLowerCase();
+            if (tar.equalsIgnoreCase(target)) {
+                entries = ArrayUtils.remove(entries, i);
+            }
+        }
+        client.setMenuEntries(entries);
     }
 
 }

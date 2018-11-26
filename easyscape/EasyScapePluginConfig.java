@@ -29,10 +29,30 @@ public interface EasyScapePluginConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "removeMonster",
+            name = "Remove Mobs",
+            description = "",
+            position = 2
+    )
+    default boolean getRemoveMonster() {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "removedMonsters",
+            name = "Removed Mobs",
+            description = "",
+            position = 3
+    )
+    default String getRemovedMonsters() {
+        return "";
+    }
+
+    @ConfigItem(
             keyName = "swapSmithing",
             name = "Smithing",
             description = "Enables swapping of smith-1 and smith-all options.",
-            position = 2
+            position = 4
     )
     default boolean getSwapSmithing() {
         return true;
@@ -42,7 +62,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "swapTanning",
             name = "Tanning",
             description = "Enables swapping of tan-1 and tan-all options.",
-            position = 3
+            position = 5
     )
     default boolean getSwapTanning() {
         return true;
@@ -52,7 +72,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "swapArdougneCape",
             name = "Ardougne Cape",
             description = "Enables swapping of teleport and wear.",
-            position = 4
+            position = 6
     )
     default boolean getSwapArdougneCape() {
         return true;
@@ -62,7 +82,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "swapEssencePounch",
             name = "Essence Pouch",
             description = "Enables swapping of fill and empty for essence pounch.",
-            position = 5
+            position = 7
     )
     default boolean getSwapEssencePouch() {
         return true;
@@ -72,7 +92,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "essenceMode",
             name = "Essence Pouch Mode",
             description = "Runecrafting or essence mining mode.",
-            position = 6
+            position = 8
     )
 
     default EssenceMode getEssenceMode() {
@@ -83,7 +103,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "swapGamesNecklace",
             name = "Games Necklace",
             description = "Enables swapping of games necklace.",
-            position = 7
+            position = 9
     )
     default boolean getGamesNecklace() {
         return true;
@@ -93,7 +113,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "gamesNecklaceMode",
             name = "Games Necklace Mode",
             description = "Teleport location mode.",
-            position = 8
+            position = 10
     )
 
     default GamesNecklaceMode getGamesNecklaceMode() {
@@ -104,7 +124,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "swapDuelingRing",
             name = "Dueling Ring",
             description = "Enables swapping of dueling ring.",
-            position = 9
+            position = 11
     )
     default boolean getDuelingRing() {
         return true;
@@ -114,10 +134,20 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "duelingRingMode",
             name = "Dueling Ring Mode",
             description = "Teleport location mode.",
-            position = 10
+            position = 12
     )
 
     default DuelingRingMode getDuelingRingMode() {
         return DuelingRingMode.DUEL_ARENA;
+    }
+
+    @ConfigItem(
+            keyName = "swapStairs",
+            name = "Swap Stairs",
+            description = "",
+            position = 6
+    )
+    default boolean getSwapStairs() {
+        return true;
     }
 }
