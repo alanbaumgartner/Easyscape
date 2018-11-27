@@ -79,10 +79,20 @@ public interface EasyScapePluginConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "swapPuroPuro",
+            name = "Puro Puro Wheat",
+            description = "",
+            position = 7
+    )
+    default boolean getSwapPuro() {
+        return true;
+    }
+
+    @ConfigItem(
             keyName = "swapEssencePounch",
             name = "Essence Pouch",
             description = "Enables swapping of fill and empty for essence pounch.",
-            position = 7
+            position = 8
     )
     default boolean getSwapEssencePouch() {
         return true;
@@ -92,7 +102,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "essenceMode",
             name = "Essence Pouch Mode",
             description = "Runecrafting or essence mining mode.",
-            position = 8
+            position = 9
     )
 
     default EssenceMode getEssenceMode() {
@@ -103,7 +113,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "swapGamesNecklace",
             name = "Games Necklace",
             description = "Enables swapping of games necklace.",
-            position = 9
+            position = 10
     )
     default boolean getGamesNecklace() {
         return true;
@@ -113,7 +123,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "gamesNecklaceMode",
             name = "Games Necklace Mode",
             description = "Teleport location mode.",
-            position = 10
+            position = 11
     )
 
     default GamesNecklaceMode getGamesNecklaceMode() {
@@ -124,7 +134,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "swapDuelingRing",
             name = "Dueling Ring",
             description = "Enables swapping of dueling ring.",
-            position = 11
+            position = 12
     )
     default boolean getDuelingRing() {
         return true;
@@ -134,7 +144,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "duelingRingMode",
             name = "Dueling Ring Mode",
             description = "Teleport location mode.",
-            position = 12
+            position = 13
     )
 
     default DuelingRingMode getDuelingRingMode() {
@@ -145,7 +155,7 @@ public interface EasyScapePluginConfig extends Config {
             keyName = "swapStairs",
             name = "Swap Stairs",
             description = "",
-            position = 6
+            position = 14
     )
     default boolean getSwapStairs() {
         return true;

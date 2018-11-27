@@ -5,7 +5,10 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.MenuAction;
 import net.runelite.api.MenuEntry;
+import net.runelite.api.Player;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
@@ -16,9 +19,10 @@ import net.runelite.client.util.Text;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.inject.Inject;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+
+import static net.runelite.api.MenuAction.MENU_ACTION_DEPRIORITIZE_OFFSET;
+import static net.runelite.api.MenuAction.WALK;
+
 
 @PluginDescriptor(
         name = "Easyscape",
@@ -29,6 +33,8 @@ import java.util.Arrays;
 
 @Slf4j
 public class EasyScapePlugin extends Plugin {
+
+    private static final int PURO_PURO_REGION_ID = 10307;
 
     @Inject
     private Client client;
@@ -63,6 +69,21 @@ public class EasyScapePlugin extends Plugin {
                 if (target.equalsIgnoreCase(s)) {
                     swap("Buy 50", "Value", target);
                 }
+            }
+        }
+
+        if (config.getSwapPuro() && isPuroPuro()) {
+            if (event.getType() == WALK.getId()) {
+                MenuEntry[] menuEntries = client.getMenuEntries();
+                MenuEntry menuEntry = menuEntries[menuEntries.length - 1];
+                menuEntry.setType(MenuAction.WALK.getId() + MENU_ACTION_DEPRIORITIZE_OFFSET);
+                client.setMenuEntries(menuEntries);
+            }
+            else if (option.equals("examine")) {
+                swap("push-through", option, target);
+            }
+            else if (option.equals("use")) {
+                swap("escape", option, target);
             }
         }
 
@@ -210,5 +231,17 @@ public class EasyScapePlugin extends Plugin {
         }
         client.setMenuEntries(entries);
     }
+
+    private boolean isPuroPuro()
+    {
+        Player local = client.getLocalPlayer();
+        if (local == null)
+        {
+            return false;
+        }
+        WorldPoint location = local.getWorldLocation();
+        return location.getRegionID() == PURO_PURO_REGION_ID;
+    }
+
 
 }
