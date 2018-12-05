@@ -50,7 +50,7 @@ public interface EasyScapePluginConfig extends Config {
 
     @ConfigItem(
             keyName = "swapSmithing",
-            name = "Smithing",
+            name = "Swap Smithing",
             description = "Enables swapping of smith-1 and smith-all options.",
             position = 4
     )
@@ -60,7 +60,7 @@ public interface EasyScapePluginConfig extends Config {
 
     @ConfigItem(
             keyName = "swapTanning",
-            name = "Tanning",
+            name = "Swap Tanning",
             description = "Enables swapping of tan-1 and tan-all options.",
             position = 5
     )
@@ -70,7 +70,7 @@ public interface EasyScapePluginConfig extends Config {
 
     @ConfigItem(
             keyName = "swapArdougneCape",
-            name = "Ardougne Cape",
+            name = "Swap Ardougne Cape",
             description = "Enables swapping of teleport and wear.",
             position = 6
     )
@@ -80,7 +80,7 @@ public interface EasyScapePluginConfig extends Config {
 
     @ConfigItem(
             keyName = "swapPuroPuro",
-            name = "Puro Puro Wheat",
+            name = "Swap Puro Puro Wheat",
             description = "",
             position = 7
     )
@@ -90,7 +90,7 @@ public interface EasyScapePluginConfig extends Config {
 
     @ConfigItem(
             keyName = "swapEssencePounch",
-            name = "Essence Pouch",
+            name = "Swap Essence Pouch",
             description = "Enables swapping of fill and empty for essence pounch.",
             position = 8
     )
@@ -111,7 +111,7 @@ public interface EasyScapePluginConfig extends Config {
 
     @ConfigItem(
             keyName = "swapGamesNecklace",
-            name = "Games Necklace",
+            name = "Swap Games Necklace",
             description = "Enables swapping of games necklace.",
             position = 10
     )
@@ -132,7 +132,7 @@ public interface EasyScapePluginConfig extends Config {
 
     @ConfigItem(
             keyName = "swapDuelingRing",
-            name = "Dueling Ring",
+            name = "Swap Dueling Ring",
             description = "Enables swapping of dueling ring.",
             position = 12
     )
@@ -158,6 +158,26 @@ public interface EasyScapePluginConfig extends Config {
             position = 14
     )
     default boolean getSwapStairs() {
+        return true;
+    }
+
+    @ConfigItem(
+        keyName = "swapSawmill",
+        name = "Swap Sawmill Operator",
+        description = "",
+        position = 15
+    )
+    default boolean getSwapSawmill() {
+        return true;
+    }
+
+    @ConfigItem(
+        keyName = "swapPlanks",
+        name = "Swap Buy Planks",
+        description = "",
+        position = 16
+    )
+    default boolean getSwapPlanks() {
         return true;
     }
 }

@@ -4,10 +4,8 @@ package net.runelite.client.plugins.easyscape;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
-import net.runelite.api.MenuAction;
-import net.runelite.api.MenuEntry;
-import net.runelite.api.Player;
+import net.runelite.api.*;
+import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.widgets.Widget;
@@ -63,10 +61,12 @@ public class EasyScapePlugin extends Plugin {
         final String option = Text.removeTags(event.getOption()).toLowerCase();
         final String target = Text.removeTags(event.getTarget()).toLowerCase();
 
+        log.debug("Target {} : Option {}", target, option);
+
         if (config.getSwapShop()) {
-            for (String s : config.getSwappedItems().split(",")) {
-                s = s.trim();
-                if (target.equalsIgnoreCase(s)) {
+            for (String swapped : config.getSwappedItems().split(",")) {
+                swapped = swapped.trim();
+                if (target.equalsIgnoreCase(swapped)) {
                     swap("Buy 50", "Value", target);
                 }
             }
@@ -88,11 +88,10 @@ public class EasyScapePlugin extends Plugin {
         }
 
         if (config.getRemoveMonster()) {
-            for (String s : config.getRemovedMonsters().split(",")) {
-                s = s.trim();
-                String[] parts = target.split(" ");
-                for(String t : parts) {
-                    if (t.equalsIgnoreCase(s) && target.substring(0, s.length()).equalsIgnoreCase(s)) {
+            for (String removed : config.getRemovedMonsters().split(",")) {
+                removed = removed.trim();
+                for(String found : target.split(" ")) {
+                    if (found.equalsIgnoreCase(removed) && target.substring(0, removed.length()).equalsIgnoreCase(removed)) {
                         delete(target);
                         break;
                     }
@@ -112,6 +111,14 @@ public class EasyScapePlugin extends Plugin {
             swap("Tan 1", "Tan All", target);
         }
 
+        if (config.getSwapSawmill()) {
+            swap("Trade", "Buy-plank", target);
+        }
+
+        if (config.getSwapPlanks()) {
+            swap("Buy 1", "Buy All", target);
+        }
+
         if (config.getSwapStairs()) {
             swap("Climb Up Stairs", "Climb Stairs", target);
         }
@@ -126,7 +133,7 @@ public class EasyScapePlugin extends Plugin {
         }
 
         if (config.getSwapEssencePouch()) {
-            if (target.equalsIgnoreCase("Small Pouch") || target.equalsIgnoreCase("Medium Pouch") || target.equalsIgnoreCase("Large Pouch")) {
+            if (isEssencePouch(target)) {
                 Widget widgetBankTitleBar = client.getWidget(WidgetInfo.BANK_TITLE_BAR);
                 switch (config.getEssenceMode()) {
                     case RUNECRAFTING:
@@ -192,7 +199,6 @@ public class EasyScapePlugin extends Plugin {
         }
     }
 
-
     private int searchIndex(MenuEntry[] entries, String option, String target) {
         for (int i = entries.length - 1; i >= 0; i--) {
             MenuEntry entry = entries[i];
@@ -232,16 +238,43 @@ public class EasyScapePlugin extends Plugin {
         client.setMenuEntries(entries);
     }
 
-    private boolean isPuroPuro()
-    {
-        Player local = client.getLocalPlayer();
-        if (local == null)
-        {
-            return false;
-        }
-        WorldPoint location = local.getWorldLocation();
-        return location.getRegionID() == PURO_PURO_REGION_ID;
+    private boolean isEssencePouch(String target) {
+        return (target.equalsIgnoreCase("Small Pouch") || target.equalsIgnoreCase("Medium Pouch") || target.equalsIgnoreCase("Large Pouch") || target.equalsIgnoreCase("Giant Pouch"));
     }
 
+    private boolean isPuroPuro() {
+        Player player = client.getLocalPlayer();
+
+        if (player == null) {
+            return false;
+        } else {
+            WorldPoint location = player.getWorldLocation();
+            return location.getRegionID() == PURO_PURO_REGION_ID;
+        }
+    }
+
+    // Locate a safespot based on a certain monster.
+    private WorldPoint findSafespot(NPC mob) {
+        Player player = client.getLocalPlayer();
+
+        if (player == null) {
+            return null;
+        } else {
+            WorldArea playerArea = player.getWorldArea();
+            WorldArea mobArea = mob.getWorldArea();
+
+            Tile[][][] map = client.getScene().getTiles();
+
+            boolean inMelee = mobArea.isInMeleeDistance(playerArea);
+            boolean inRange = playerArea.hasLineOfSightTo(client, playerArea);
+            boolean isSafe = !inMelee && !inRange;
+
+            if (isSafe) {
+                return player.getWorldLocation();
+            } else {
+                return null;
+            }
+        }
+    }
 
 }
