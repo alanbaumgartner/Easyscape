@@ -1,7 +1,5 @@
 package net.runelite.client.plugins.easyscape;
 
-
-import com.google.common.eventbus.Subscribe;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
@@ -11,6 +9,7 @@ import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.Text;
@@ -30,7 +29,7 @@ import static net.runelite.api.MenuAction.WALK;
 )
 
 @Slf4j
-public class EasyScapePlugin extends Plugin {
+public class EasyscapePlugin extends Plugin {
 
     private static final int PURO_PURO_REGION_ID = 10307;
 
@@ -38,11 +37,11 @@ public class EasyScapePlugin extends Plugin {
     private Client client;
 
     @Inject
-    private EasyScapePluginConfig config;
+    private EasyscapePluginConfig config;
 
     @Provides
-    EasyScapePluginConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(EasyScapePluginConfig.class);
+    EasyscapePluginConfig provideConfig(ConfigManager configManager) {
+        return configManager.getConfig(EasyscapePluginConfig.class);
     }
 
     @Override
@@ -58,16 +57,25 @@ public class EasyScapePlugin extends Plugin {
     @Subscribe
     public void onMenuEntryAdded(MenuEntryAdded event) {
 
+
+        if (client.getGameState() != GameState.LOGGED_IN) {
+            return;
+        }
+
+        Widget loginScreenOne = client.getWidget(WidgetInfo.LOGIN_CLICK_TO_PLAY_SCREEN);
+        Widget loginScreenTwo = client.getWidget(WidgetInfo.LOGIN_CLICK_TO_PLAY_SCREEN_MESSAGE_OF_THE_DAY);
+
+        if (loginScreenOne != null || loginScreenTwo != null) {
+            return;
+        }
+
         final String option = Text.removeTags(event.getOption()).toLowerCase();
         final String target = Text.removeTags(event.getTarget()).toLowerCase();
 
-        log.debug("Target {} : Option {}", target, option);
-
         if (config.getSwapShop()) {
-            for (String swapped : config.getSwappedItems().split(",")) {
-                swapped = swapped.trim();
-                if (target.equalsIgnoreCase(swapped)) {
-                    swap("Buy 50", "Value", target);
+            for (String item : config.getSwappedItems().split(",")) {
+                if (target.equalsIgnoreCase(item.trim())) {
+                    swap("Buy 50", option, target);
                 }
             }
         }
@@ -79,12 +87,36 @@ public class EasyScapePlugin extends Plugin {
                 menuEntry.setType(MenuAction.WALK.getId() + MENU_ACTION_DEPRIORITIZE_OFFSET);
                 client.setMenuEntries(menuEntries);
             }
-            else if (option.equals("examine")) {
+            else if (option.equalsIgnoreCase("examine")) {
                 swap("push-through", option, target);
             }
-            else if (option.equals("use")) {
+            else if (option.equalsIgnoreCase("use")) {
                 swap("escape", option, target);
             }
+        }
+
+        if (config.getEasyConstruction()) {
+            if (event.getType() == WALK.getId()) {
+                MenuEntry[] menuEntries = client.getMenuEntries();
+                MenuEntry menuEntry = menuEntries[menuEntries.length - 1];
+                menuEntry.setType(MenuAction.WALK.getId() + MENU_ACTION_DEPRIORITIZE_OFFSET);
+                client.setMenuEntries(menuEntries);
+            }
+
+            swap("Build", option, target);
+
+            MenuEntry[] entries = client.getMenuEntries();
+            for (int i = entries.length - 1; i >= 0; i--) {
+                for (String temp : config.getConstructionItems().split(",")) {
+                    if (temp.equalsIgnoreCase(Text.removeTags(entries[i].getTarget()))) {
+                        if (entries[i].getType() == 3 || entries[i].getType() == 1002) {
+                            entries = ArrayUtils.remove(entries, i);
+                            i--;
+                        }
+                    }
+                }
+            }
+            client.setMenuEntries(entries);
         }
 
         if (config.getRemoveMonster()) {
@@ -92,7 +124,7 @@ public class EasyScapePlugin extends Plugin {
                 removed = removed.trim();
                 for(String found : target.split(" ")) {
                     if (found.equalsIgnoreCase(removed) && target.substring(0, removed.length()).equalsIgnoreCase(removed)) {
-                        delete(target);
+                        delete(event.getIdentifier());
                         break;
                     }
                 }
@@ -101,30 +133,30 @@ public class EasyScapePlugin extends Plugin {
 
         if (config.getSwapSmithing()) {
             if (option.equalsIgnoreCase("Smith-1")) {
-                swap("Smith-All", "Smith-1", target);
+                swap("Smith-All", option, target);
             } else {
                 swap("Smith-All-Sets", "Smith-1-Set", target);
             }
         }
 
-        if (config.getSwapTanning()) {
-            swap("Tan 1", "Tan All", target);
+        if (config.getSwapTanning() && option.equalsIgnoreCase("Tan 1")) {
+                swap("Tan All", option, target);
         }
 
-        if (config.getSwapSawmill()) {
-            swap("Trade", "Buy-plank", target);
+        if (config.getSwapSawmill() && target.equalsIgnoreCase("Sawmill operator")) {
+            swap("Buy-plank", option, target);
         }
 
-        if (config.getSwapPlanks()) {
-            swap("Buy 1", "Buy All", target);
+        if (config.getSwapSawmillPlanks() && option.equalsIgnoreCase("Buy 1")) {
+            swap("Buy All", option, target);
         }
 
-        if (config.getSwapStairs()) {
-            swap("Climb Up Stairs", "Climb Stairs", target);
+        if (config.getSwapStairs() && option.equalsIgnoreCase("Climb Stairs")) {
+            swap("Climb Up Stairs", option, target);
         }
 
         if (option.equalsIgnoreCase("Clear-All") && target.equalsIgnoreCase("Bank Filler")) {
-            swap("Clear", "Clear-All", target);
+            swap("Clear", option, target);
         }
 
         if (target.toLowerCase().contains("ardougne cloak") && config.getSwapArdougneCape()) {
@@ -226,13 +258,13 @@ public class EasyScapePlugin extends Plugin {
         }
     }
 
-    private void delete(String target) {
+    private void delete(int target) {
         MenuEntry[] entries = client.getMenuEntries();
 
         for (int i = entries.length - 1; i >= 0; i--) {
-            final String tar = Text.removeTags(entries[i].getTarget()).toLowerCase();
-            if (tar.equalsIgnoreCase(target)) {
+            if (entries[i].getIdentifier() == target) {
                 entries = ArrayUtils.remove(entries, i);
+                i--;
             }
         }
         client.setMenuEntries(entries);

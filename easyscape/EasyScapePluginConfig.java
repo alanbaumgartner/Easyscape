@@ -6,7 +6,7 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
 @ConfigGroup("easyscape")
-public interface EasyScapePluginConfig extends Config {
+public interface EasyscapePluginConfig extends Config {
 
     @ConfigItem(
             keyName = "swapShop",
@@ -157,27 +157,50 @@ public interface EasyScapePluginConfig extends Config {
             description = "",
             position = 14
     )
+
     default boolean getSwapStairs() {
         return true;
     }
 
     @ConfigItem(
-        keyName = "swapSawmill",
-        name = "Swap Sawmill Operator",
-        description = "",
-        position = 15
+            keyName = "swapSawmill",
+            name = "Swap Sawmill Operator",
+            description = "",
+            position = 15
     )
     default boolean getSwapSawmill() {
         return true;
     }
 
     @ConfigItem(
-        keyName = "swapPlanks",
-        name = "Swap Buy Planks",
-        description = "",
-        position = 16
+            keyName = "swapSawmillPlanks",
+            name = "Swap Buy Planks",
+            description = "",
+            position = 16
     )
-    default boolean getSwapPlanks() {
+
+    default boolean getSwapSawmillPlanks() {
         return true;
+    }
+
+    @ConfigItem(
+            keyName = "easyConstruction",
+            name = "Swap Build",
+            description = "",
+            position = 17
+    )
+
+    default boolean getEasyConstruction() {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "constructionItems",
+            name = "Build Items",
+            description = "",
+            position = 18
+    )
+    default String getConstructionItems() {
+        return "";
     }
 }
