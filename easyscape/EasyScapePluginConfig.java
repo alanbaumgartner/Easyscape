@@ -1,6 +1,5 @@
 package net.runelite.client.plugins.easyscape;
 
-
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -9,9 +8,20 @@ import net.runelite.client.config.ConfigItem;
 public interface EasyscapePluginConfig extends Config {
 
     @ConfigItem(
+            keyName = "removeExamine",
+            name = "Remove Examine",
+            description = "",
+            position = 0
+    )
+    default boolean getRemoveExamine() {
+        return true;
+    }
+
+    @ConfigItem(
             keyName = "swapShop",
             name = "Shop",
-            description = "Enables swapping of items in the shop with their buy-50 option."
+            description = "Enables swapping of items in the shop with their buy-50 option.",
+            position = 1
     )
     default boolean getSwapShop() {
         return true;
@@ -20,7 +30,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swappedItems",
             name = "Shop Items",
-            description = "Items listed here will have their value and buy-50 options swapped."
+            description = "Items listed here will have their value and buy-50 options swapped.",
+            position = 2
     )
     default String getSwappedItems() {
         return "";
@@ -29,7 +40,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "easyConstruction",
             name = "Swap Build",
-            description = ""
+            description = "",
+            position = 3
     )
 
     default boolean getEasyConstruction() {
@@ -39,7 +51,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "constructionItems",
             name = "Build Items",
-            description = ""
+            description = "",
+            position = 4
     )
 
     default String getConstructionItems() {
@@ -49,7 +62,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "removeMonster",
             name = "Remove Mobs",
-            description = ""
+            description = "",
+            position = 5
     )
     default boolean getRemoveMonster() {
         return true;
@@ -58,7 +72,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "removedMonsters",
             name = "Removed Mobs",
-            description = ""
+            description = "",
+            position = 6
     )
     default String getRemovedMonsters() {
         return "";
@@ -67,7 +82,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapSmithing",
             name = "Swap Smithing",
-            description = "Enables swapping of smith-1 and smith-all options."
+            description = "Enables swapping of smith-1 and smith-all options.",
+            position = 7
     )
     default boolean getSwapSmithing() {
         return true;
@@ -76,16 +92,28 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapTanning",
             name = "Swap Tanning",
-            description = "Enables swapping of tan-1 and tan-all options."
+            description = "Enables swapping of tan-1 and tan-all options.",
+            position = 8
     )
     default boolean getSwapTanning() {
         return true;
     }
 
     @ConfigItem(
+            keyName = "swapCrafting",
+            name = "Swap Crafting Make",
+            description = "",
+            position = 9
+    )
+    default boolean getSwapCrafting() {
+        return true;
+    }
+
+    @ConfigItem(
             keyName = "swapArdougneCape",
             name = "Swap Ardougne Cape",
-            description = "Enables swapping of teleport and wear."
+            description = "Enables swapping of teleport and wear.",
+            position = 10
     )
     default boolean getSwapArdougneCape() {
         return true;
@@ -94,7 +122,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapStairs",
             name = "Swap Stairs",
-            description = ""
+            description = "",
+            position = 11
     )
 
     default boolean getSwapStairs() {
@@ -104,7 +133,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapSawmill",
             name = "Swap Sawmill Operator",
-            description = ""
+            description = "",
+            position = 12
     )
     default boolean getSwapSawmill() {
         return true;
@@ -113,7 +143,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapSawmillPlanks",
             name = "Swap Buy Planks",
-            description = ""
+            description = "",
+            position = 13
     )
 
     default boolean getSwapSawmillPlanks() {
@@ -123,7 +154,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapPuroPuro",
             name = "Swap Puro Puro Wheat",
-            description = ""
+            description = "",
+            position = 14
     )
     default boolean getSwapPuro() {
         return true;
@@ -132,7 +164,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapEssencePounch",
             name = "Swap Essence Pouch",
-            description = "Enables swapping of fill and empty for essence pounch."
+            description = "Enables swapping of fill and empty for essence pounch.",
+            position = 15
     )
     default boolean getSwapEssencePouch() {
         return true;
@@ -141,7 +174,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "essenceMode",
             name = "Essence Pouch Mode",
-            description = "Runecrafting or essence mining mode."
+            description = "Runecrafting or essence mining mode.",
+            position = 16
     )
 
     default EssenceMode getEssenceMode() {
@@ -151,7 +185,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapGamesNecklace",
             name = "Swap Games Necklace",
-            description = "Enables swapping of games necklace."
+            description = "Enables swapping of games necklace.",
+            position = 17
     )
     default boolean getGamesNecklace() {
         return true;
@@ -160,7 +195,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "gamesNecklaceMode",
             name = "Games Necklace Mode",
-            description = "Teleport location mode."
+            description = "Teleport location mode.",
+            position = 18
     )
 
     default GamesNecklaceMode getGamesNecklaceMode() {
@@ -170,7 +206,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapDuelingRing",
             name = "Swap Dueling Ring",
-            description = "Enables swapping of dueling ring."
+            description = "Enables swapping of dueling ring.",
+            position = 19
     )
     default boolean getDuelingRing() {
         return true;
@@ -179,7 +216,8 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "duelingRingMode",
             name = "Dueling Ring Mode",
-            description = "Teleport location mode."
+            description = "Teleport location mode.",
+            position = 20
     )
 
     default DuelingRingMode getDuelingRingMode() {

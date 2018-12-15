@@ -17,6 +17,9 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.inject.Inject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static net.runelite.api.MenuAction.MENU_ACTION_DEPRIORITIZE_OFFSET;
 import static net.runelite.api.MenuAction.WALK;
 
@@ -33,6 +36,9 @@ public class EasyscapePlugin extends Plugin {
 
     private static final int PURO_PURO_REGION_ID = 10307;
 
+    private Map<Integer, Integer> idSwap;
+    private MenuEntry[] entries;
+
     @Inject
     private Client client;
 
@@ -47,6 +53,7 @@ public class EasyscapePlugin extends Plugin {
     @Override
     public void startUp() {
         log.debug("Easyscape Started.");
+        idSwap = new HashMap<>();
     }
 
     @Override
@@ -72,6 +79,32 @@ public class EasyscapePlugin extends Plugin {
         final String option = Text.removeTags(event.getOption()).toLowerCase();
         final String target = Text.removeTags(event.getTarget()).toLowerCase();
 
+        entries = client.getMenuEntries();
+
+        if (config.getRemoveExamine()) {
+            for (int i = entries.length - 1; i >= 0; i--) {
+                if (entries[i].getOption() == "Examine") {
+                    entries = ArrayUtils.remove(entries, i);
+                    i--;
+                }
+            }
+            client.setMenuEntries(entries);
+        }
+
+        if (config.getRemoveMonster()) {
+            if (config.getRemovedMonsters().length() > 0) {
+                for (String removed : config.getRemovedMonsters().split(",")) {
+                    removed = removed.trim();
+                    for (String found : target.split(" ")) {
+                        if (found.equalsIgnoreCase(removed) && target.substring(0, removed.length()).equalsIgnoreCase(removed)) {
+                            delete(event.getIdentifier());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         if (config.getSwapShop()) {
             for (String item : config.getSwappedItems().split(",")) {
                 if (target.equalsIgnoreCase(item.trim())) {
@@ -82,10 +115,9 @@ public class EasyscapePlugin extends Plugin {
 
         if (config.getSwapPuro() && isPuroPuro()) {
             if (event.getType() == WALK.getId()) {
-                MenuEntry[] menuEntries = client.getMenuEntries();
-                MenuEntry menuEntry = menuEntries[menuEntries.length - 1];
+                MenuEntry menuEntry = entries[entries.length - 1];
                 menuEntry.setType(MenuAction.WALK.getId() + MENU_ACTION_DEPRIORITIZE_OFFSET);
-                client.setMenuEntries(menuEntries);
+                client.setMenuEntries(entries);
             }
             else if (option.equalsIgnoreCase("examine")) {
                 swap("push-through", option, target);
@@ -97,15 +129,13 @@ public class EasyscapePlugin extends Plugin {
 
         if (config.getEasyConstruction()) {
             if (event.getType() == WALK.getId()) {
-                MenuEntry[] menuEntries = client.getMenuEntries();
-                MenuEntry menuEntry = menuEntries[menuEntries.length - 1];
+                MenuEntry menuEntry = entries[entries.length - 1];
                 menuEntry.setType(MenuAction.WALK.getId() + MENU_ACTION_DEPRIORITIZE_OFFSET);
-                client.setMenuEntries(menuEntries);
+                client.setMenuEntries(entries);
             }
 
             swap("Build", option, target);
 
-            MenuEntry[] entries = client.getMenuEntries();
             for (int i = entries.length - 1; i >= 0; i--) {
                 for (String temp : config.getConstructionItems().split(",")) {
                     if (temp.equalsIgnoreCase(Text.removeTags(entries[i].getTarget()))) {
@@ -119,23 +149,11 @@ public class EasyscapePlugin extends Plugin {
             client.setMenuEntries(entries);
         }
 
-        if (config.getRemoveMonster()) {
-            for (String removed : config.getRemovedMonsters().split(",")) {
-                removed = removed.trim();
-                for(String found : target.split(" ")) {
-                    if (found.equalsIgnoreCase(removed) && target.substring(0, removed.length()).equalsIgnoreCase(removed)) {
-                        delete(event.getIdentifier());
-                        break;
-                    }
-                }
-            }
-        }
-
         if (config.getSwapSmithing()) {
-            if (option.equalsIgnoreCase("Smith-1")) {
-                swap("Smith-All", option, target);
+            if (option.equalsIgnoreCase("Smith 1")) {
+                swap("Smith All", option, target);
             } else {
-                swap("Smith-All-Sets", "Smith-1-Set", target);
+                swap("Smith All Sets", "Smith 1 Set", target);
             }
         }
 
@@ -229,6 +247,10 @@ public class EasyscapePlugin extends Plugin {
                 }
             }
         }
+
+        idSwap.forEach((k,v) -> performSwap(k,v));
+        idSwap.clear();
+
     }
 
     private int searchIndex(MenuEntry[] entries, String option, String target) {
@@ -245,22 +267,22 @@ public class EasyscapePlugin extends Plugin {
     }
 
     private void swap(String optionA, String optionB, String target) {
-        MenuEntry[] entries = client.getMenuEntries();
-
         int idxA = searchIndex(entries, optionA, target);
         int idxB = searchIndex(entries, optionB, target);
 
         if (idxA >= 0 && idxB >= 0) {
-            MenuEntry entry = entries[idxA];
-            entries[idxA] = entries[idxB];
-            entries[idxB] = entry;
-            client.setMenuEntries(entries);
+            idSwap.put(idxA, idxB);
         }
     }
 
-    private void delete(int target) {
-        MenuEntry[] entries = client.getMenuEntries();
+    private void performSwap(int a, int b) {
+        MenuEntry entry = entries[a];
+        entries[a] = entries[b];
+        entries[b] = entry;
+        client.setMenuEntries(entries);
+    }
 
+    private void delete(int target) {
         for (int i = entries.length - 1; i >= 0; i--) {
             if (entries[i].getIdentifier() == target) {
                 entries = ArrayUtils.remove(entries, i);
