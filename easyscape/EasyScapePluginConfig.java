@@ -5,7 +5,7 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
 @ConfigGroup("easyscape")
-public interface EasyscapePluginConfig extends Config {
+public interface EasyScapePluginConfig extends Config {
 
     @ConfigItem(
             keyName = "removeExamine",
