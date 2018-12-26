@@ -32,7 +32,7 @@ import static net.runelite.api.MenuAction.WALK;
 )
 
 @Slf4j
-public class EasyscapePlugin extends Plugin {
+public class EasyScapePlugin extends Plugin {
 
     private static final int PURO_PURO_REGION_ID = 10307;
 
@@ -43,11 +43,11 @@ public class EasyscapePlugin extends Plugin {
     private Client client;
 
     @Inject
-    private EasyscapePluginConfig config;
+    private EasyScapePluginConfig config;
 
     @Provides
-    EasyscapePluginConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(EasyscapePluginConfig.class);
+    EasyScapePluginConfig provideConfig(ConfigManager configManager) {
+        return configManager.getConfig(EasyScapePluginConfig.class);
     }
 
     @Override
