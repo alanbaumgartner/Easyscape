@@ -82,7 +82,7 @@ public class EasyscapePlugin extends Plugin {
 
         if (config.getRemoveExamine()) {
             for (int i = entries.length - 1; i >= 0; i--) {
-                if (entries[i].getOption() == "Examine") {
+                if (entries[i].getOption().equals("Examine")) {
                     entries = ArrayUtils.remove(entries, i);
                     i--;
                 }
@@ -233,7 +233,7 @@ public class EasyscapePlugin extends Plugin {
         }
 
         if (config.getDuelingRing()) {
-            if (target.toLowerCase().contains("dueling ring")) {
+            if (target.toLowerCase().contains("ring of dueling")) {
                 switch (config.getDuelingRingMode()) {
                     case DUEL_ARENA:
                         swap("Duel Arena", option, target);
@@ -243,6 +243,27 @@ public class EasyscapePlugin extends Plugin {
                         break;
                     case CLAN_WARS:
                         swap("Clan Wars", option, target);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        if (config.getGlory()) {
+            if (target.toLowerCase().contains("amulet of glory")) {
+                switch (config.getGloryMode()) {
+                    case EDGEVILLE:
+                        swap(GloryMode.EDGEVILLE.toString(), option, target);
+                        break;
+                    case KARAMJA:
+                        swap(GloryMode.KARAMJA.toString(), option, target);
+                        break;
+                    case DRAYNOR_VILLAGE:
+                        swap(GloryMode.DRAYNOR_VILLAGE.toString(), option, target);
+                        break;
+                    case AL_KHARID:
+                        swap(GloryMode.AL_KHARID.toString(), option, target);
                         break;
                     default:
                         break;

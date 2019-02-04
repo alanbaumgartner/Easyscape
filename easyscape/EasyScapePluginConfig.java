@@ -223,4 +223,26 @@ public interface EasyscapePluginConfig extends Config {
     default DuelingRingMode getDuelingRingMode() {
         return DuelingRingMode.DUEL_ARENA;
     }
+
+    @ConfigItem(
+            keyName = "swapGlory",
+            name = "Swap Glory",
+            description = "Enables swapping of Amulet of Glory.",
+            position = 21
+    )
+    default boolean getGlory() {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "gloryMode",
+            name = "Glory Mode",
+            description = "Teleport location mode.",
+            position = 22
+    )
+
+    default GloryMode getGloryMode() {
+        return GloryMode.EDGEVILLE;
+    }
+
 }
