@@ -118,7 +118,7 @@ public class EasyscapePlugin extends Plugin {
             }
         }
 
-        if (config.getEasyConstruction() && isHouse()) {
+        if (config.getEasyConstruction()) {
             if (event.getType() == WALK.getId()) {
                 MenuEntry menuEntry = entries[entries.length - 1];
                 menuEntry.setType(MenuAction.WALK.getId() + MENU_ACTION_DEPRIORITIZE_OFFSET);
