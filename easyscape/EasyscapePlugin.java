@@ -160,7 +160,11 @@ public class EasyscapePlugin extends Plugin {
         }
 
         if (config.getSwapTanning() && option.equalsIgnoreCase("Tan 1")) {
-                swap("Tan All", option, target);
+            swap("Tan All", option, target);
+        }
+
+        if (config.getSwapCrafting() && option.equalsIgnoreCase("Make-1")) {
+            swap("Make-All", option, target);
         }
 
         if (config.getSwapSawmill() && target.equalsIgnoreCase("Sawmill operator")) {
