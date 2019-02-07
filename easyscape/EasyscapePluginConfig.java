@@ -60,22 +60,22 @@ public interface EasyscapePluginConfig extends Config {
     }
 
     @ConfigItem(
-            keyName = "removeMonster",
-            name = "Remove Monsters",
+            keyName = "removeObjects",
+            name = "Remove Objects",
             description = "",
             position = 5
     )
-    default boolean getRemoveMonster() {
+    default boolean getRemoveObjects() {
         return true;
     }
 
     @ConfigItem(
-            keyName = "removedMonsters",
-            name = "Removed Monsters",
+            keyName = "removedObjects",
+            name = "Removed Objects",
             description = "",
             position = 6
     )
-    default String getRemovedMonsters() {
+    default String getRemovedObjects() {
         return "";
     }
 

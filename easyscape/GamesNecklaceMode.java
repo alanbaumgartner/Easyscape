@@ -5,7 +5,7 @@ public enum GamesNecklaceMode {
     BARBARIAN_OUTPOST("Barbarian Outpost"),
     CORPOREAL_BEAST("Corporeal Beast"),
     TEARS_OF_GUTHIX("Tears of Guthix"),
-    WINTERTODT("Wintertodt");
+    WINTERTODT("Wintertodt Camp");
 
     private final String name;
 

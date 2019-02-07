@@ -16,8 +16,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import javax.inject.Inject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static net.runelite.api.MenuAction.MENU_ACTION_DEPRIORITIZE_OFFSET;
 import static net.runelite.api.MenuAction.WALK;
@@ -36,7 +35,7 @@ public class EasyscapePlugin extends Plugin {
     private static final int PURO_PURO_REGION_ID = 10307;
     private static final int HOUSE_REGION_ID = 7513;
 
-    private Map<Integer, Integer> idSwap;
+    private Set<Swapper> swapping;
     private MenuEntry[] entries;
 
     @Inject
@@ -53,7 +52,7 @@ public class EasyscapePlugin extends Plugin {
     @Override
     public void startUp() {
         log.debug("Easyscape Started.");
-        idSwap = new HashMap<>();
+        swapping = new HashSet<>();
     }
 
     @Override
@@ -90,16 +89,19 @@ public class EasyscapePlugin extends Plugin {
             client.setMenuEntries(entries);
         }
 
-        if (config.getRemoveMonster() && !config.getRemovedMonsters().equals("")) {
-            if (config.getRemovedMonsters().length() > 0) {
-                for (String removed : config.getRemovedMonsters().split(",")) {
-                    removed = removed.trim();
-                    for (String found : target.split(" ")) {
-                        if (found.equalsIgnoreCase(removed) && target.substring(0, removed.length()).equalsIgnoreCase(removed)) {
-                            delete(event.getIdentifier());
-                            break;
-                        }
+        if (config.getRemoveObjects() && !config.getRemovedObjects().equals("")) {
+            for (String removed : config.getRemovedObjects().split(",")) {
+                removed = removed.trim();
+                if (target.contains("->")) {
+                    String trimmed = target.split("->")[1].trim();
+                    if (trimmed.length() >= removed.length() && trimmed.substring(0, removed.length()).equalsIgnoreCase(removed)) {
+                        delete(event.getIdentifier());
+                        break;
                     }
+                }
+                if (target.length() >= removed.length() && target.substring(0, removed.length()).equalsIgnoreCase(removed)) {
+                    delete(event.getIdentifier());
+                    break;
                 }
             }
         }
@@ -118,7 +120,7 @@ public class EasyscapePlugin extends Plugin {
             }
         }
 
-        if (config.getEasyConstruction()) {
+        if (config.getEasyConstruction() && !config.getConstructionItems().equals("")) {
             if (event.getType() == WALK.getId()) {
                 MenuEntry menuEntry = entries[entries.length - 1];
                 menuEntry.setType(MenuAction.WALK.getId() + MENU_ACTION_DEPRIORITIZE_OFFSET);
@@ -128,13 +130,11 @@ public class EasyscapePlugin extends Plugin {
             swap("Build", option, target);
 
             for (int i = entries.length - 1; i >= 0; i--) {
-                if (!config.getConstructionItems().equals("")) {
-                    for (String item : config.getConstructionItems().split(",")) {
-                        if (item.trim().equalsIgnoreCase(Text.removeTags(entries[i].getTarget()))) {
-                            if (!entries[i].getOption().equalsIgnoreCase("remove")) {
-                                entries = ArrayUtils.remove(entries, i);
-                                i--;
-                            }
+                for (String item : config.getConstructionItems().split(",")) {
+                    if (item.trim().equalsIgnoreCase(Text.removeTags(entries[i].getTarget()))) {
+                        if (!entries[i].getOption().equalsIgnoreCase("remove")) {
+                            entries = ArrayUtils.remove(entries, i);
+                            i--;
                         }
                     }
                 }
@@ -143,7 +143,7 @@ public class EasyscapePlugin extends Plugin {
             client.setMenuEntries(entries);
         }
 
-        if (config.getSwapShop()) {
+        if (config.getSwapShop() && !config.getSwappedItems().equals("")) {
             for (String item : config.getSwappedItems().split(",")) {
                 if (target.equalsIgnoreCase(item.trim())) {
                     swap("Buy 50", option, target);
@@ -154,8 +154,8 @@ public class EasyscapePlugin extends Plugin {
         if (config.getSwapSmithing()) {
             if (option.equalsIgnoreCase("Smith 1")) {
                 swap("Smith All", option, target);
-            } else {
-                swap("Smith All Sets", "Smith 1 Set", target);
+            } else if (option.equalsIgnoreCase("Smith 1 Set")) {
+                swap("Smith All Sets", option, target);
             }
         }
 
@@ -216,19 +216,19 @@ public class EasyscapePlugin extends Plugin {
             if (target.toLowerCase().contains("games necklace")) {
                 switch (config.getGamesNecklaceMode()) {
                     case BURTHORPE:
-                        swap("Burthorpe", option, target);
+                        swap(GamesNecklaceMode.BURTHORPE.toString(), option, target);
                         break;
                     case BARBARIAN_OUTPOST:
-                        swap("Barbarian Outpost", option, target);
+                        swap(GamesNecklaceMode.BARBARIAN_OUTPOST.toString(), option, target);
                         break;
                     case CORPOREAL_BEAST:
-                        swap("Corporeal Beast", option, target);
+                        swap(GamesNecklaceMode.CORPOREAL_BEAST.toString(), option, target);
                         break;
                     case TEARS_OF_GUTHIX:
-                        swap("Tears of Guthix", option, target);
+                        swap(GamesNecklaceMode.TEARS_OF_GUTHIX.toString(), option, target);
                         break;
                     case WINTERTODT:
-                        swap("Wintertodt Camp", option, target);
+                        swap(GamesNecklaceMode.WINTERTODT.toString(), option, target);
                         break;
                     default:
                         break;
@@ -240,13 +240,13 @@ public class EasyscapePlugin extends Plugin {
             if (target.toLowerCase().contains("ring of dueling")) {
                 switch (config.getDuelingRingMode()) {
                     case DUEL_ARENA:
-                        swap("Duel Arena", option, target);
+                        swap(DuelingRingMode.DUEL_ARENA.toString(), option, target);
                         break;
                     case CASTLE_WARS:
-                        swap("Castle Wars", option, target);
+                        swap(DuelingRingMode.CASTLE_WARS.toString(), option, target);
                         break;
                     case CLAN_WARS:
-                        swap("Clan Wars", option, target);
+                        swap(DuelingRingMode.CLAN_WARS.toString(), option, target);
                         break;
                     default:
                         break;
@@ -275,38 +275,41 @@ public class EasyscapePlugin extends Plugin {
             }
         }
 
-        idSwap.forEach((k,v) -> performSwap(k,v));
-        idSwap.clear();
-
-    }
-
-    private int searchIndex(MenuEntry[] entries, String option, String target) {
-        for (int i = entries.length - 1; i >= 0; i--) {
-            MenuEntry entry = entries[i];
-            String entryOption = Text.removeTags(entry.getOption()).toLowerCase();
-            String entryTarget = Text.removeTags(entry.getTarget()).toLowerCase();
-
-            if (entryOption.equalsIgnoreCase(option) && entryTarget.equalsIgnoreCase(target)) {
-                return i;
-            }
-        }
-        return -1;
+        startSwap();
+        performSwap();
     }
 
     private void swap(String optionA, String optionB, String target) {
-        int idxA = searchIndex(entries, optionA, target);
-        int idxB = searchIndex(entries, optionB, target);
+        swapping.add(new Swapper(target, optionA, optionB));
+    }
 
-        if (idxA >= 0 && idxB >= 0) {
-            idSwap.put(idxA, idxB);
+    private void startSwap() {
+        int index = 0;
+        for (MenuEntry entry : entries) {
+            String target = Text.removeTags(entry.getTarget()).toLowerCase();
+            for (Swapper swap : swapping) {
+                if (swap.getTarget().equalsIgnoreCase(target)) {
+                    if (entry.getOption().equalsIgnoreCase(swap.getOptionOne())) {
+                        swap.setIndexOne(index);
+                    } else if (entry.getOption().equalsIgnoreCase(swap.getOptionTwo())) {
+                        swap.setIndexTwo(index);
+                    }
+                }
+            }
+            index++;
         }
     }
 
-    private void performSwap(int a, int b) {
-        MenuEntry entry = entries[a];
-        entries[a] = entries[b];
-        entries[b] = entry;
+    private void performSwap() {
+        for (Swapper swap : swapping) {
+            if (swap.isReady()) {
+                MenuEntry entry = entries[swap.getIndexOne()];
+                entries[swap.getIndexOne()] = entries[swap.getIndexTwo()];
+                entries[swap.getIndexTwo()] = entry;
+            }
+        }
         client.setMenuEntries(entries);
+        swapping.clear();
     }
 
     private void delete(int target) {
