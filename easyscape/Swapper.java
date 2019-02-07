@@ -26,9 +26,11 @@ public class Swapper {
         this.target = target;
         this.optionOne = optionOne;
         this.optionTwo = optionTwo;
+        this.indexOne = -1;
+        this.indexTwo = -1;
     }
 
     public boolean isReady() {
-        return this.optionOne != null && this.optionTwo != null;
+        return this.indexOne != -1 && this.indexTwo != -1;
     }
 }
