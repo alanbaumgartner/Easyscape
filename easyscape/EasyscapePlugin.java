@@ -4,6 +4,9 @@ import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.GameObjectDespawned;
+import net.runelite.api.events.GameObjectSpawned;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
@@ -20,6 +23,7 @@ import java.util.*;
 
 import static net.runelite.api.MenuAction.MENU_ACTION_DEPRIORITIZE_OFFSET;
 import static net.runelite.api.MenuAction.WALK;
+import static net.runelite.api.ObjectID.PORTAL_4525;
 
 
 @PluginDescriptor(
@@ -33,8 +37,7 @@ import static net.runelite.api.MenuAction.WALK;
 public class EasyscapePlugin extends Plugin {
 
     private static final int PURO_PURO_REGION_ID = 10307;
-    private static final int HOUSE_REGION_ID = 7513;
-
+    private boolean inHouse = false;
     private Set<Swapper> swapping;
     private MenuEntry[] entries;
 
@@ -120,7 +123,7 @@ public class EasyscapePlugin extends Plugin {
             }
         }
 
-        if (config.getEasyConstruction() && !config.getConstructionItems().equals("")) {
+        if (config.getEasyConstruction() && !config.getConstructionItems().equals("") && inHouse) {
             if (event.getType() == WALK.getId()) {
                 MenuEntry menuEntry = entries[entries.length - 1];
                 menuEntry.setType(MenuAction.WALK.getId() + MENU_ACTION_DEPRIORITIZE_OFFSET);
@@ -326,8 +329,27 @@ public class EasyscapePlugin extends Plugin {
         return (target.equalsIgnoreCase("Small Pouch") || target.equalsIgnoreCase("Medium Pouch") || target.equalsIgnoreCase("Large Pouch") || target.equalsIgnoreCase("Giant Pouch"));
     }
 
+    @Subscribe
+    public void onGameObjectSpawned(GameObjectSpawned event)
+    {
+        final GameObject gameObject = event.getGameObject();
+        if (PORTAL_4525 == gameObject.getId())
+        {
+            this.inHouse = true;
+        }
+    }
+
+    @Subscribe
+    public void onGameStateChanged(GameStateChanged event)
+    {
+        if (event.getGameState() == GameState.LOADING)
+        {
+            this.inHouse = false;
+        }
+    }
+
     private boolean isHouse() {
-        return client.getMapRegions()[0] == HOUSE_REGION_ID;
+        return this.inHouse;
     }
 
     private boolean isPuroPuro() {
