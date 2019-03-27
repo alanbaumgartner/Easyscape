@@ -10,7 +10,7 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "removeExamine",
             name = "Remove Examine",
-            description = "",
+            description = "Removes Examine from the list of options.",
             position = 0
     )
     default boolean getRemoveExamine() {
@@ -40,7 +40,7 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "easyConstruction",
             name = "Easy Construction",
-            description = "",
+            description = "Makes \"Remove\" the default option for listed items in build mode.",
             position = 3
     )
 
@@ -51,7 +51,7 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "constructionItems",
             name = "Construction Items",
-            description = "",
+            description = "Items listed here will have the default option set to \"Removed\" in build mode.",
             position = 4
     )
 
@@ -62,7 +62,7 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "removeObjects",
             name = "Remove Objects",
-            description = "",
+            description = "Removes interaction with the listed objects.",
             position = 5
     )
     default boolean getRemoveObjects() {
@@ -72,7 +72,7 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "removedObjects",
             name = "Removed Objects",
-            description = "",
+            description = "Objects listed here will have all interaction be removed.",
             position = 6
     )
     default String getRemovedObjects() {
@@ -102,7 +102,7 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapCrafting",
             name = "Swap Crafting",
-            description = "",
+            description = "Enables swapping of Make-1 and Make-all options.",
             position = 9
     )
     default boolean getSwapCrafting() {
@@ -122,7 +122,7 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapStairs",
             name = "Swap Stairs",
-            description = "",
+            description = "Default option climb up on left click.",
             position = 11
     )
 
@@ -133,7 +133,7 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapSawmill",
             name = "Swap Sawmill Operator",
-            description = "",
+            description = "Makes Buy-plank the default option on the sawmill operator.",
             position = 12
     )
     default boolean getSwapSawmill() {
@@ -143,7 +143,7 @@ public interface EasyscapePluginConfig extends Config {
     @ConfigItem(
             keyName = "swapSawmillPlanks",
             name = "Swap Buy Planks",
-            description = "",
+            description = "Makes Buy All the default option in buy planks.",
             position = 13
     )
 
