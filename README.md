@@ -1,4 +1,8 @@
-# Easyscape
+# Development Stopped
+Hello everyone! If you liked my work on Easyscape, check out RuneLitePlus! https://github.com/runelite-extended/runelite
+They have updated and improved upon my original work and have created an awesome client.
+
+## Easyscape
 Runelite plugin to make Runescape easier.
 
 ## Usage
